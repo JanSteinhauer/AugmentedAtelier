@@ -13,9 +13,12 @@ struct ContentView: View {
     @State private var currentModelIndex: Int = 0
     @GestureState private var dragOffset: CGSize = .zero
     @State private var accumulatedRotation: Angle = .zero
+    @State private var isAutoSpinning: Bool = false
 
     private let modelNames = ["Jaguar Whistle", "Frog Game",  "Road Pillar"]
     private let windowSize: Float = 1.0
+
+    let timer = Timer.publish(every: 0.02, on: .main, in: .common).autoconnect()
 
     var body: some View {
         VStack {
@@ -37,9 +40,14 @@ struct ContentView: View {
                             accumulatedRotation += .degrees(value.translation.width / 2)
                         }
                 )
+                .onReceive(timer) { _ in
+                    if isAutoSpinning {
+                        accumulatedRotation += .degrees(1)
+                    }
+                }
         }
         .ornament(visibility: .visible, attachmentAnchor: .scene(.bottomFront), contentAlignment: .center) {
-            HStack(spacing: 50) {
+            HStack(spacing: 30) {
                 Button(action: {
                     currentModelIndex = (currentModelIndex - 1 + modelNames.count) % modelNames.count
                     accumulatedRotation = .zero
@@ -49,6 +57,16 @@ struct ContentView: View {
                 }
 
                 Text(modelNames[currentModelIndex])
+
+                // Auto-spin toggle button
+                Button(action: {
+                    isAutoSpinning.toggle()
+                }) {
+                    Image(systemName: isAutoSpinning
+                          ? "arrow.trianglehead.2.clockwise.rotate.90.circle.fill"
+                          : "arrow.trianglehead.2.clockwise.rotate.90.circle")
+                        .font(.largeTitle)
+                }
 
                 Button(action: {
                     currentModelIndex = (currentModelIndex + 1) % modelNames.count
