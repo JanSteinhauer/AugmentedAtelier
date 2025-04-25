@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import MapKit
+import AVKit
 
 struct DetailedArtView: View {
     @EnvironmentObject var viewModel: AtelierViewModel
@@ -23,6 +25,11 @@ struct DetailedArtView: View {
         }
     }
 
+    @State private var michoacanRegion = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 19.1538, longitude: -101.8834),
+        span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
+    )
+
     var body: some View {
         VStack(spacing: 20) {
             Text(viewModel.currentModelName)
@@ -31,13 +38,42 @@ struct DetailedArtView: View {
 
             Text(description)
                 .multilineTextAlignment(.leading)
-                               .padding()
-                               .frame(width: 500)
+                .padding()
+                .frame(width: 500, height: 100)
 
-            Image(systemName: "photo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 200, height: 200)
+            Group {
+                switch viewModel.currentModelName {
+                case "Jaguar Whistle":
+                    Map(position: .constant(
+                        MapCameraPosition.region(
+                            MKCoordinateRegion(
+                                center: CLLocationCoordinate2D(latitude: 19.1, longitude: -101.8),
+                                span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
+                            )
+                        ))
+                    ) {
+                        
+                    }
+                    .frame(width: 500, height: 500)
+
+                case "Frog Game":
+                    Image("FrogGamePic")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 500, height: 500)
+
+                case "Road Pillar":
+                    if let url = Bundle.main.url(forResource: "RoadPillarVid", withExtension: "mp4") {
+                        VideoPlayer(player: AVPlayer(url: url))
+                            .frame(width: 500, height: 500)
+                    } else {
+                        Text("Video not found.")
+                    }
+
+                default:
+                    EmptyView()
+                }
+            }
         }
         .padding()
         .onAppear {
@@ -53,3 +89,4 @@ struct DetailedArtView: View {
     DetailedArtView()
         .environmentObject(AtelierViewModel())
 }
+
