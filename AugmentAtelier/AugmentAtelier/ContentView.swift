@@ -48,8 +48,9 @@ struct ContentView: View {
                 Text(viewModel.currentModelName)
 
                 Button(action: {
-                    viewModel.isInfoActive.toggle()
-                    openWindow(id: "R1")
+                    if !viewModel.isInfoActive {
+                        openWindow(id: "R1")
+                    }
                 }) {
                     Image(systemName: viewModel.isInfoActive ? "info.circle.fill" : "info.circle")
                         .font(.largeTitle)

@@ -40,6 +40,12 @@ struct DetailedArtView: View {
                 .frame(width: 200, height: 200)
         }
         .padding()
+        .onAppear {
+            viewModel.isInfoActive = true
+        }
+        .onDisappear {
+            viewModel.isInfoActive = false
+        }
     }
 }
 
