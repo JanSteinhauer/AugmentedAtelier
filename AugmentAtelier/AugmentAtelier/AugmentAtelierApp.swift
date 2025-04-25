@@ -9,11 +9,28 @@ import SwiftUI
 
 @main
 struct AugmentAtelierApp: App {
+    @StateObject private var viewModel = AtelierViewModel()
+
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: "MainAtelier") {
             ContentView()
-                
-        }.windowStyle(.volumetric)
-//        .defaultSize(width: 1.5, height: 1.5, depth: 3)
+                .environmentObject(viewModel)
+        }
+        .windowStyle(.volumetric)
+
+        WindowGroup(id: "R1") {
+            DetailedArtView()
+                .environmentObject(viewModel)
+        }
+        .windowResizability(.contentSize)
+        .defaultWindowPlacement { content, context in
+            if let mainWindow = context.windows.first(where: { $0.id == "MainAtelier" }) {
+                WindowPlacement(.trailing(mainWindow))
+            } else {
+                WindowPlacement()
+            }
+        }
     }
 }
+
+
